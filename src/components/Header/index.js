@@ -1,19 +1,39 @@
-import {IoCartOutline} from 'react-icons/io5'
+import {Link, withRouter} from 'react-router-dom'
+import Cookies from 'js-cookie'
 import './index.css'
 
 const Header = props => {
-  const {restaurant, cart} = props
-  const restaurantName = restaurant.restaurant_name
+  const {restaurantName, cart} = props
+  const onClickLogout = () => {
+    const {history} = props
+    Cookies.remove('jwt_token')
+    history.replace('/login')
+  }
   return (
     <div className="header-container">
-      <h1>{restaurantName}</h1>
+      <Link to="/" className="link">
+        <h1>{restaurantName}</h1>
+      </Link>
       <p className="myorders">My Orders</p>
-      <div className="cart">
-        <IoCartOutline className="icon-size" />
-        <div className="no-of-items-in-cart">{cart}</div>
-      </div>
+      <Link to="/cart" className="nav-link">
+        <button type="button" className="btn" data-testid="cart">
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/nxt-trendz-cart-icon.png"
+            alt="nav cart"
+            className="nav-bar-img"
+          />
+        </button>
+      </Link>
+      <span className="cart-count-badge">{cart}</span>
+      <button
+        type="button"
+        className="logout-desktop-btn"
+        onClick={onClickLogout}
+      >
+        Logout
+      </button>
     </div>
   )
 }
 
-export default Header
+export default withRouter(Header)

@@ -1,20 +1,14 @@
 import {useState, useEffect} from 'react'
+import CartContext from '../../context/CartContext'
 import Header from '../Header'
 import Menu from '../Menu'
 import Dishes from '../Dishes'
 import './index.css'
 
 const Layout = () => {
-  const [cartObj, setCartObj] = useState({})
   const [restaurant, setRestaurant] = useState({})
   const [menuList, setmenuList] = useState([])
   const [dishesList, setDishesList] = useState([])
-  let cart = 0
-  console.log(cartObj)
-  const vals = Object.values(cartObj)
-  vals.forEach(item => {
-    cart += item
-  })
   useEffect(() => {
     const getData = async () => {
       const response = await fetch(
@@ -32,19 +26,25 @@ const Layout = () => {
     return <h1>Loading</h1>
   }
   return (
-    <div className="layout">
-      <Header restaurant={restaurant} cart={cart} />
-      <Menu
-        menuList={menuList}
-        dishesList={dishesList}
-        setDishesList={setDishesList}
-      />
-      <Dishes
-        dishesList={dishesList}
-        setCartObj={setCartObj}
-        cartObj={cartObj}
-      />
-    </div>
+    <CartContext.Consumer>
+      {value => {
+        const {cartList} = value
+        return (
+          <div className="layout">
+            <Header
+              restaurantName={restaurant.restaurant_name}
+              cart={cartList.length}
+            />
+            <Menu
+              menuList={menuList}
+              dishesList={dishesList}
+              setDishesList={setDishesList}
+            />
+            <Dishes dishesList={dishesList} />
+          </div>
+        )
+      }}
+    </CartContext.Consumer>
   )
 }
 
